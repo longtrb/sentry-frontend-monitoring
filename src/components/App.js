@@ -95,6 +95,7 @@ class App extends Component {
   checkout() {
     let num = 10/0;
     console.log(num);
+    this.noExistMethodError();
     this.myCodeIsPerfect();
 
     /*
