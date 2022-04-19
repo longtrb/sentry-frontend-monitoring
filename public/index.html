@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="theme-color" content="#000000">
+  <meta name="sentry-trace" content="{{ span.toSentryTrace() }}" />
   <!--
       manifest.json provides metadata used when your web app is added to the
       homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
@@ -23,12 +24,33 @@
   <title>Sentry Demo</title>
 
   <!-- Import SDK -->
-  <script src="https://browser.sentry-cdn.com/5.15.5/bundle.min.js" crossorigin="anonymous"></script>
-
+  <script src="https://browser.sentry-cdn.com/6.19.6/bundle.min.js" crossorigin="anonymous"></script>
+  <script
+    src="https://browser.sentry-cdn.com/6.19.6/bundle.tracing.min.js"
+    integrity="sha384-spx7oCG6Qgrx9nvSm2VB6yca4F8JvqY+982JS4ZDuQMk0V8Z069/yZu5GDywQyzx"
+    crossorigin="anonymous"
+  ></script>
   <!-- Configure SDK -->
   <script>
     Sentry.init({
-      dsn: '<PASTE YOUR DSN KEY HERE>'
+      dsn: 'https://2ebc2ba0f0ef483ab09bdd6bbbe3e14d@o1208932.ingest.sentry.io/6342416',
+      release: "1.0.1",
+      // This enables automatic instrumentation (highly recommended), but is not
+      // necessary for purely manual usage
+      integrations: [new Sentry.BrowserTracing({
+        tracingOrigins: ["localhost", "192.168.56.101"],
+
+      })],
+
+      // To set a uniform sample rate
+      tracesSampleRate: 0.8,
+      beforeSend(event, hint) {
+        // Check if it is an exception, and if so, show the report dialog
+        if (event.exception) {
+          Sentry.showReportDialog({ eventId: event.event_id });
+        }
+        return event;
+      },
     });
   </script>
 <link href="https://fonts.googleapis.com/css?family=Karla:400,700" rel="stylesheet">
